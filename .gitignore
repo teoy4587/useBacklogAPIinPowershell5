@@ -1,0 +1,6 @@
+# ログなどの出力先フォルダ
+/src/log/
+/src/output/
+
+# 設定ファイル（apikey等がpushされないように管理対象外とする）
+src/.config.ps1
