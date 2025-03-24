@@ -1,8 +1,8 @@
 # 引数定義　
 Param(
-  [parameter(Mandatory = $true)][ValidateSet("get", "post")]$Arg1, #HTTPmethod(GETまたはPOST)
-  [parameter(Mandatory = $true)][ValidateSet("issues", "projects", "wikis")]$Arg2, #issuesなどのURL部分
-  $Arg3 #パラメーター
+  [parameter(Mandatory = $true)][ValidateSet("get", "post")][string]$Arg1, #HTTPmethod(GETまたはPOST)
+  [parameter(Mandatory = $true)][ValidateSet("issues", "projects", "wikis")][string]$Arg2, #issuesなどのURL部分
+  [string]$Arg3 #パラメーター
 )
 
 # 設定ファイルの読み込み
@@ -30,7 +30,7 @@ function BacklogApiExetcuteHelper {
 
 #実行対象のURLを組み立て
 function makeUrl {
-  Param ([parameter(Mandatory = $true)][string]$target, [parameter][string]$params)
+  Param ([parameter(Mandatory = $true)][string]$target, [string]$params)
 
   $urlStrings = $urlBase + $target + $apiKey
 
