@@ -14,5 +14,15 @@ Describe 'BacklogApiExetcuteHelper' {
       $result = makeUrl 'test'
       $result | Should Be ($urlBase + 'test' + $apiKey)
     }
+
+    IT 'makeResultFile'{
+      # JSONデータを元にtxtファイルを作成する
+      $jsonString= '{ "key1":"test", "key2" : "value2",  "key3" : "true" }'
+      $jsonObject = ConvertFrom-Json $JsonString
+
+      makeResultFile $jsonObject
+      (Test-Path "./output/result_$today.txt") | Should be true
+
+    }
   }
 }
