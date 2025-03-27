@@ -15,9 +15,15 @@ Describe 'BacklogApiExetcuteHelper' {
       $result | Should Be ($urlBase + 'test' + $apiKey)
     }
 
-    IT 'makeResultFile'{
+    # GETリクエストで動作するAPIを実行して結果が返却される
+    It 'executeApIGet' {
+      $urlTest = makeUrl 'issues'
+      executeApIGet $urlTest | Should not be $null
+    }
+
+    IT 'makeResultFile' {
       # JSONデータを元にtxtファイルを作成する
-      $jsonString= '{ "key1":"test", "key2" : "value2",  "key3" : "true" }'
+      $jsonString = '{ "key1":"test", "key2" : "value2",  "key3" : "true" }'
       $jsonObject = ConvertFrom-Json $JsonString
 
       makeResultFile $jsonObject
