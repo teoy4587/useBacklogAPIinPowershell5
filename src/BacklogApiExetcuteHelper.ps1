@@ -2,7 +2,8 @@
 Param(
   [parameter(Mandatory = $true)][ValidateSet("get", "post")][string]$Arg1, #HTTPmethod(GETまたはPOST)
   [parameter(Mandatory = $true)][ValidateSet("issues", "projects", "wikis")][string]$Arg2, #issuesなどのURL部分
-  [string]$Arg3 #パラメーター
+  [string]$Arg3, #Body経由で引き渡すパラメーター
+  [string]$Arg4 #URLに組み込むパラメーター
 )
 
 # 設定ファイルの読み込み
@@ -14,7 +15,11 @@ function BacklogApiExetcuteHelper {
   try {
     # 入力値を元にAPIを実行する
     $url = makeUrl $Arg2 $Arg3
-    $res = executeApI $url $Arg1
+    if($arg1 -eq "get"){
+    $res = executeApIGet $url
+  } else {
+    $res = executeApIExceptGet $url $Arg1
+  }
     makeResultFile $res
   }
   catch {
@@ -32,15 +37,33 @@ function BacklogApiExetcuteHelper {
 function makeUrl {
   Param ([parameter(Mandatory = $true)][string]$target, [string]$params)
 
+  if($null -eq $params){
+    #URLにパラメーターを含まない場合
   $urlStrings = $urlBase + $target + $apiKey
+  }
+  else {
+    #
+    $urlStrings = $urlBase + $target + $apiKey
+  }
 
   return $urlStrings
 }
 
-#get/postリクエストを送信してAPIを実行
-function executeApI {
-  Param ([parameter(Mandatory = $true)]$urlFull, [parameter(Mandatory = $true)][string]$method)
-  return Invoke-RestMethod -uri $urlFull -method $method -ErrorAction Stop
+#getリクエストを送信してAPIを実行
+function executeApIGet {
+  Param ([parameter(Mandatory = $true)]$urlFull)
+  return Invoke-RestMethod -uri $urlFull -method get -ErrorAction Stop
+}
+
+#get以外（postやpatch）のリクエストを送信してAPIを実行
+function executeApIExceptGet {
+  Param ([parameter(Mandatory = $true)]$urlFull, [parameter(Mandatory = $true)][string]$method, [string]$parameterName, [string]$parameter)
+
+    $headers = @{"Content-Type" = "application/x-www-form-urlencoded"}
+    $params = @{"$parameterName" = "$parameter"}
+
+    return Invoke-RestMethod -uri $urlFull  -method $method -Headers $headers -Body $params -ErrorAction Stop
+
 }
 
 # 結果をutf8のJSON形式に変換してファイルに出力

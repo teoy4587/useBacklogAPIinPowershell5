@@ -21,6 +21,12 @@ Describe 'BacklogApiExetcuteHelper' {
       executeApIGet $urlTest | Should not be $null
     }
 
+    # postリクエストで動作するAPIを実行して結果が返却される
+    It 'executeApIExceptGet' {
+      $urlTest = makeUrl 'watchings' '1134245'
+      executeApIExceptGet $urlTest 'post' 'note' 'test' | Should not be $null
+    }
+
     IT 'makeResultFile' {
       # JSONデータを元にtxtファイルを作成する
       $jsonString = '{ "key1":"test", "key2" : "value2",  "key3" : "true" }'
